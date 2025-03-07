@@ -16,30 +16,27 @@ jobs:
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
-        
-      - name: Install TinyTeX
-        run: |
-          quarto tools install tinytex
-          
-      - name: Install additional LaTeX packages
-        run: |
-          quarto tools install tinytex
-          tlmgr update --self
-          tlmgr install xetex
-          tlmgr install fontspec
-          tlmgr install unicode-math
-          tlmgr install polyglossia
-          tlmgr install cm-unicode
-          tlmgr install adjustbox
-          tlmgr install algorithm2e
-          tlmgr install stmaryrd
-          tlmgr install fontawesome5
-          tlmgr install yfonts
-          tlmgr install cancel
 
-      - name: Render and Publish
-        uses: quarto-dev/quarto-actions/publish@v2
+      - name: Render HTML
+        run: |
+          quarto render lectures/1.md --to html -o _site/lectures/
+          mkdir -p _site
+          cp -r files _site/
+          
+          # Create a simple index.html that redirects to the lecture
+          echo '<!DOCTYPE html>
+          <html>
+            <head>
+              <meta http-equiv="refresh" content="0; url=lectures/1.html">
+              <title>Redirecting...</title>
+            </head>
+            <body>
+              <p>Redirecting to lecture...</p>
+            </body>
+          </html>' > _site/index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          target: gh-pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
