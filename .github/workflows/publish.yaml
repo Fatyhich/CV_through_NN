@@ -19,9 +19,15 @@ jobs:
 
       - name: Render HTML
         run: |
+          # Create output directory structure
+          mkdir -p _site/lectures
+          mkdir -p _site/files
+          
+          # Copy necessary files
+          cp -r files/* _site/files/
+          
+          # Render HTML only (no PDF)
           quarto render lectures/1.md --to html -o _site/lectures/
-          mkdir -p _site
-          cp -r files _site/
           
           # Create a simple index.html that redirects to the lecture
           echo '<!DOCTYPE html>
@@ -36,7 +42,3 @@ jobs:
           </html>' > _site/index.html
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site
