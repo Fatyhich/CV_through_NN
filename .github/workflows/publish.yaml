@@ -16,14 +16,15 @@ jobs:
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
-        with:
-          version: 1.3.450
-
-      - name: Install TinyTeX
-        uses: quarto-dev/quarto-actions/setup-tinytex@v2
         
+      - name: Install TinyTeX
+        run: |
+          quarto tools install tinytex
+          
       - name: Install additional LaTeX packages
         run: |
+          quarto tools install tinytex
+          tlmgr update --self
           tlmgr install xetex
           tlmgr install fontspec
           tlmgr install unicode-math
