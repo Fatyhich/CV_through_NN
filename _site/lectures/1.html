@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Daniil Merkulov">
+
+<title>Basic linear algebra recap. Convergence rates</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../favicon.svg" rel="icon" type="image/svg+xml">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-79108a0fc1995748cbd19a5b0e3e3e7c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<meta property="og:title" content="Basic linear algebra recap. Convergence rates">
+<meta name="twitter:title" content="Basic linear algebra recap. Convergence rates">
+<meta name="twitter:card" content="summary">
+</head><body class="nav-fixed">\newcommand{\bgimage}{../files/back1.jpeg}
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+
+
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../logo.svg" alt="hse25.fmin.xyz" class="navbar-logo">
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <span class="nav-link">
+<span class="menu-text">program.md</span>
+    </span>
+  </li>  
+  <li class="nav-item">
+    <span class="nav-link">
+<span class="menu-text">homework.md</span>
+    </span>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools tools-wide">
+    <a href="https://github.com/MerkulovDaniil/hse25" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://www.youtube.com/@fmin" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
+    <a href="https://t.me/hse25_fmin" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-telegram"></i></a>
+    <a href="https://classroom.google.com/c/NzQ1ODY3MzUxNTMx?cjc=7ccfdjv" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-person-workspace"></i></a>
+    <a href="https://docs.google.com/spreadsheets/d/1FsozOqYd4BZI8Cvzow61hkoyPiTdGhzKQ8vIvqtf4cY/edit?usp=sharing" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-table"></i></a>
+    <a href="https://fmin.xyz" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-gem"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="1.pdf"><i class="bi bi-file-pdf"></i>Beamer</a></li></ul></div></div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Basic linear algebra recap. Convergence rates</h1>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Daniil Merkulov </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Optimization for ML. Faculty of Computer Science. HSE University
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="basic-linear-algebra-background" class="level1">
+<h1>Basic linear algebra background</h1>
+<section id="vectors-and-matrices" class="level2">
+<h2 class="anchored" data-anchor-id="vectors-and-matrices">Vectors and matrices</h2>
+<p>We will treat all vectors as column vectors by default. The space of real vectors of length <span class="math inline">\(n\)</span> is denoted by <span class="math inline">\(\mathbb{R}^n\)</span>, while the space of real-valued <span class="math inline">\(m \times n\)</span> matrices is denoted by <span class="math inline">\(\mathbb{R}^{m \times n}\)</span>. That’s it: <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p><span id="eq-vector"><span class="math display">\[
+x = \begin{bmatrix}
+x_1 \\
+x_2 \\
+\vdots \\
+x_n
+\end{bmatrix} \quad x^T = \begin{bmatrix}
+x_1 &amp; x_2 &amp; \dots &amp; x_n
+\end{bmatrix} \quad x \in \mathbb{R}^n, x_i \in \mathbb{R}
+\tag{1}\]</span></span></p>
+<p>. . .</p>
+<p>Similarly, if <span class="math inline">\(A \in \mathbb{R}^{m \times n}\)</span> we denote transposition as <span class="math inline">\(A^T \in \mathbb{R}^{n \times m}\)</span>: <span class="math display">\[
+A = \begin{bmatrix}
+a_{11} &amp; a_{12} &amp; \dots &amp; a_{1n} \\
+a_{21} &amp; a_{22} &amp; \dots &amp; a_{2n} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+a_{m1} &amp; a_{m2} &amp; \dots &amp; a_{mn}
+\end{bmatrix} \quad A^T = \begin{bmatrix}
+a_{11} &amp; a_{21} &amp; \dots &amp; a_{m1} \\
+a_{12} &amp; a_{22} &amp; \dots &amp; a_{m2} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+a_{1n} &amp; a_{2n} &amp; \dots &amp; a_{mn}
+\end{bmatrix} \quad A \in \mathbb{R}^{m \times n}, a_{ij} \in \mathbb{R}
+\]</span> We will write <span class="math inline">\(x \geq 0\)</span> and <span class="math inline">\(x \neq 0\)</span> to indicate componentwise relationships</p>
+<hr>
+<div id="fig-vector" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-vector-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="vector.pdf" class="img-fluid">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-vector-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Equivivalent representations of a vector
+</figcaption>
+</figure>
+</div>
+<hr>
+<p>A matrix is symmetric if <span class="math inline">\(A = A^T\)</span>. It is denoted as <span class="math inline">\(A \in \mathbb{S}^n\)</span> (set of square symmetric matrices of dimension <span class="math inline">\(n\)</span>). Note, that only a square matrix could be symmetric by definition.</p>
+<p>. . .</p>
+<p>A matrix <span class="math inline">\(A \in \mathbb{S}^n\)</span> is called <strong>positive (negative) definite</strong> if for all <span class="math inline">\(x \neq 0 : x^T Ax &gt; (&lt;) 0\)</span>. We denote this as <span class="math inline">\(A \succ (\prec) 0\)</span>. The set of such matrices is denoted as <span class="math inline">\(\mathbb{S}^n_{++} (\mathbb{S}^n_{- -})\)</span></p>
+<p>. . .</p>
+<p>A matrix <span class="math inline">\(A \in \mathbb{S}^n\)</span> is called <strong>positive (negative) semidefinite</strong> if for all <span class="math inline">\(x : x^T Ax \geq (\leq) 0\)</span>. We denote this as <span class="math inline">\(A \succeq (\preceq) 0\)</span>. The set of such matrices is denoted as <span class="math inline">\(\mathbb{S}^n_{+} (\mathbb{S}^n_{-})\)</span></p>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-question">
+<p>Is it correct, that a positive definite matrix has all positive entries?</p>
+</div>
+</div>
+</div>
+</div>
+<p>. . .</p>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-question">
+<p>Is it correct, that if a matrix is symmetric it should be positive definite?</p>
+</div>
+</div>
+</div>
+</div>
+<p>. . .</p>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-question">
+<p>Is it correct, that if a matrix is positive definite it should be symmetric?</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="matrix-product-matmul" class="level2">
+<h2 class="anchored" data-anchor-id="matrix-product-matmul">Matrix product (matmul)</h2>
+<p>Let <span class="math inline">\(A\)</span> be a matrix of size <span class="math inline">\(m \times n\)</span>, and <span class="math inline">\(B\)</span> be a matrix of size <span class="math inline">\(n \times p\)</span>, and let the product <span class="math inline">\(AB\)</span> be: <span class="math display">\[
+C = AB
+\]</span> then <span class="math inline">\(C\)</span> is a <span class="math inline">\(m \times p\)</span> matrix, with element <span class="math inline">\((i, j)\)</span> given by: <span class="math display">\[
+c_{ij} = \sum_{k=1}^n a_{ik}b_{kj}.
+\]</span></p>
+<p>This operation in a naive form requires <span class="math inline">\(\mathcal{O}(n^3)\)</span> arithmetical operations, where <span class="math inline">\(n\)</span> is usually assumed as the largest dimension of matrices.</p>
+<p>. . .</p>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-question">
+<p>Is it possible to multiply two matrices faster, than <span class="math inline">\(\mathcal{O}(n^3)\)</span>? How about <span class="math inline">\(\mathcal{O}(n^2)\)</span>, <span class="math inline">\(\mathcal{O}(n)\)</span>?</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="matrix-by-vector-product-matvec" class="level2">
+<h2 class="anchored" data-anchor-id="matrix-by-vector-product-matvec">Matrix by vector product (matvec)</h2>
+<p>Let <span class="math inline">\(A\)</span> be a matrix of shape <span class="math inline">\(m \times n\)</span>, and <span class="math inline">\(x\)</span> be <span class="math inline">\(n \times 1\)</span> vector, then the <span class="math inline">\(i\)</span>-th component of the product: <span class="math display">\[
+z = Ax
+\]</span> is given by: <span class="math display">\[
+z_i = \sum_{k=1}^n a_{ik}x_k
+\]</span></p>
+<p>This operation in a naive form requires <span class="math inline">\(\mathcal{O}(n^2)\)</span> arithmetical operations, where <span class="math inline">\(n\)</span> is usually assumed as the largest dimension of matrices.</p>
+<p>Remember, that:</p>
+<ul>
+<li><span class="math inline">\(C = AB \quad C^T = B^T A^T\)</span></li>
+<li><span class="math inline">\(AB \neq BA\)</span></li>
+<li><span class="math inline">\(e^{A} =\sum\limits_{k=0}^{\infty }{1 \over k!}A^{k}\)</span></li>
+<li><span class="math inline">\(e^{A+B} \neq e^{A} e^{B}\)</span> (but if <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are commuting matrices, which means that <span class="math inline">\(AB = BA\)</span>, <span class="math inline">\(e^{A+B} = e^{A} e^{B}\)</span>)</li>
+<li><span class="math inline">\(\langle x, Ay\rangle = \langle A^T x, y\rangle\)</span></li>
+</ul>
+</section>
+<section id="norms" class="level2">
+<h2 class="anchored" data-anchor-id="norms">Norms</h2>
+<p>Norm is a <strong>qualitative measure of the smallness of a vector</strong> and is typically denoted as <span class="math inline">\(\Vert x \Vert\)</span>.</p>
+<p>The norm should satisfy certain properties:</p>
+<ol type="1">
+<li><span class="math inline">\(\Vert \alpha x \Vert = \vert \alpha\vert \Vert x \Vert\)</span>, <span class="math inline">\(\alpha \in \mathbb{R}\)</span></li>
+<li><span class="math inline">\(\Vert x + y \Vert \leq \Vert x \Vert + \Vert y \Vert\)</span> (triangle inequality)</li>
+<li>If <span class="math inline">\(\Vert x \Vert = 0\)</span> then <span class="math inline">\(x = 0\)</span></li>
+</ol>
+<p>. . .</p>
+<p>The distance between two vectors is then defined as <span class="math display">\[
+d(x, y) = \Vert x - y \Vert.
+\]</span> The most well-known and widely used norm is <strong>Euclidean norm</strong>: <span class="math display">\[
+\Vert x \Vert_2 = \sqrt{\sum_{i=1}^n |x_i|^2},
+\]</span> which corresponds to the distance in our real life. If the vectors have complex elements, we use their modulus. Euclidean norm, or <span class="math inline">\(2\)</span>-norm, is a subclass of an important class of <span class="math inline">\(p\)</span>-norms:</p>
+<p><span class="math display">\[
+\Vert x \Vert_p = \Big(\sum_{i=1}^n |x_i|^p\Big)^{1/p}.
+\]</span></p>
+<hr>
+</section>
+<section id="p-norm-of-a-vector" class="level2">
+<h2 class="anchored" data-anchor-id="p-norm-of-a-vector"><span class="math inline">\(p\)</span>-norm of a vector</h2>
+<p>There are two very important special cases. The infinity norm, or Chebyshev norm is defined as the element of the maximal absolute value: <span class="math display">\[
+\Vert x \Vert_{\infty} = \max_i | x_i|
+\]</span></p>
+<p>. . .</p>
+<p><span class="math inline">\(L_1\)</span> norm (or <strong>Manhattan distance</strong>) which is defined as the sum of modules of the elements of <span class="math inline">\(x\)</span>:</p>
+<p><span class="math display">\[
+\Vert x \Vert_1 = \sum_i |x_i|
+\]</span></p>
+<p>. . .</p>
+<p><span class="math inline">\(L_1\)</span> norm plays a very important role: it all relates to the <strong>compressed sensing</strong> methods that emerged in the mid-00s as one of the most popular research topics. The code for the picture below is available <a href="https://colab.research.google.com/github/MerkulovDaniil/optim/blob/master/assets/Notebooks/Balls_p_norm.ipynb"><em>here:</em></a>. Check also <a href="https://fmin.xyz/docs/theory/balls_norm.mp4"><em>this</em></a> video.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="p_balls.pdf" class="img-fluid"></p>
+<figcaption>Balls in different norms on a plane</figcaption>
+</figure>
+</div>
+</section>
+<section id="matrix-norms" class="level2">
+<h2 class="anchored" data-anchor-id="matrix-norms">Matrix norms</h2>
+<p>In some sense there is no big difference between matrices and vectors (you can vectorize the matrix), and here comes the simplest matrix norm <strong>Frobenius</strong> norm: <span class="math display">\[
+\Vert A \Vert_F = \left(\sum_{i=1}^m \sum_{j=1}^n |a_{ij}|^2\right)^{1/2}
+\]</span></p>
+<p>. . .</p>
+<p>Spectral norm, <span class="math inline">\(\Vert A \Vert_2\)</span> is one of the most used matrix norms (along with the Frobenius norm).</p>
+<p><span class="math display">\[
+\Vert A \Vert_2 = \sup_{x \ne 0} \frac{\Vert A x \Vert_2}{\Vert x \Vert_{2}},
+\]</span></p>
+<p>It can not be computed directly from the entries using a simple formula, like the Frobenius norm, however, there are efficient algorithms to compute it. It is directly related to the <strong>singular value decomposition</strong> (SVD) of the matrix. It holds</p>
+<p><span class="math display">\[
+\Vert A \Vert_2 = \sigma_1(A) = \sqrt{\lambda_{\max}(A^TA)}
+\]</span></p>
+<p>where <span class="math inline">\(\sigma_1(A)\)</span> is the largest singular value of the matrix <span class="math inline">\(A\)</span>.</p>
+</section>
+<section id="scalar-product" class="level2">
+<h2 class="anchored" data-anchor-id="scalar-product">Scalar product</h2>
+<p>The standard <strong>scalar (inner) product</strong> between vectors <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> from <span class="math inline">\(\mathbb{R}^n\)</span> is given by <span class="math display">\[
+\langle x, y \rangle = x^T y = \sum\limits_{i=1}^n x_i y_i = y^T x =  \langle y, x \rangle
+\]</span></p>
+<p>Here <span class="math inline">\(x_i\)</span> and <span class="math inline">\(y_i\)</span> are the scalar <span class="math inline">\(i\)</span>-th components of corresponding vectors.</p>
+<div class="callout callout-style-default callout-example callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-example">
+<p>Prove, that you can switch the position of a matrix inside a scalar product with transposition: <span class="math inline">\(\langle x, Ay\rangle = \langle A^Tx, y\rangle\)</span> and <span class="math inline">\(\langle x, yB\rangle = \langle xB^T, y\rangle\)</span></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="matrix-scalar-product" class="level2">
+<h2 class="anchored" data-anchor-id="matrix-scalar-product">Matrix scalar product</h2>
+<p>The standard <strong>scalar (inner) product</strong> between matrices <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> from <span class="math inline">\(\mathbb{R}^{m \times n}\)</span> is given by</p>
+<p><span class="math display">\[
+\langle X, Y \rangle = \text{tr}(X^T Y) = \sum\limits_{i=1}^m\sum\limits_{j=1}^n X_{ij} Y_{ij} =  \text{tr}(Y^T X) =  \langle Y, X \rangle
+\]</span></p>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-question">
+<p>Is there any connection between the Frobenious norm <span class="math inline">\(\Vert \cdot \Vert_F\)</span> and scalar product between matrices <span class="math inline">\(\langle \cdot, \cdot \rangle\)</span>?</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="eigenvectors-and-eigenvalues" class="level2">
+<h2 class="anchored" data-anchor-id="eigenvectors-and-eigenvalues">Eigenvectors and eigenvalues</h2>
+<p>A scalar value <span class="math inline">\(\lambda\)</span> is an eigenvalue of the <span class="math inline">\(n \times n\)</span> matrix <span class="math inline">\(A\)</span> if there is a nonzero vector <span class="math inline">\(q\)</span> such that <span class="math display">\[
+Aq = \lambda q.
+\]</span></p>
+<p>he vector <span class="math inline">\(q\)</span> is called an eigenvector of <span class="math inline">\(A\)</span>. The matrix <span class="math inline">\(A\)</span> is nonsingular if none of its eigenvalues are zero. The eigenvalues of symmetric matrices are all real numbers, while nonsymmetric matrices may have imaginary eigenvalues. If the matrix is positive definite as well as symmetric, its eigenvalues are all positive real numbers.</p>
+</section>
+<section id="eigenvectors-and-eigenvalues-1" class="level2">
+<h2 class="anchored" data-anchor-id="eigenvectors-and-eigenvalues-1">Eigenvectors and eigenvalues</h2>
+<div class="callout callout-style-default callout-theorem callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Theorem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-theorem">
+<p><span class="math display">\[
+A \succeq (\succ) 0 \Leftrightarrow \text{all eigenvalues of } A \text{ are } \geq (&gt;) 0
+\]</span></p>
+<div class="callout callout-style-default callout-proof callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Proof
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-proof" data-collapse="true">
+<ol type="1">
+<li><span class="math inline">\(\rightarrow\)</span> Suppose some eigenvalue <span class="math inline">\(\lambda\)</span> is negative and let <span class="math inline">\(x\)</span> denote its corresponding eigenvector. Then <span class="math display">\[
+Ax = \lambda x \rightarrow x^T Ax = \lambda x^T x &lt; 0
+\]</span> which contradicts the condition of <span class="math inline">\(A \succeq 0\)</span>.</li>
+<li><span class="math inline">\(\leftarrow\)</span> For any symmetric matrix, we can pick a set of eigenvectors <span class="math inline">\(v_1, \dots, v_n\)</span> that form an orthogonal basis of <span class="math inline">\(\mathbb{R}^n\)</span>. Pick any <span class="math inline">\(x \in \mathbb{R}^n\)</span>. <span class="math display">\[
+\begin{split}
+x^T A x &amp;= (\alpha_1 v_1 + \ldots + \alpha_n v_n)^T A (\alpha_1 v_1 + \ldots + \alpha_n v_n)\\
+&amp;= \sum \alpha_i^2 v_i^T A v_i = \sum \alpha_i^2 \lambda_i v_i^T v_i \geq 0
+\end{split}
+\]</span> here we have used the fact that <span class="math inline">\(v_i^T v_j = 0\)</span>, for <span class="math inline">\(i \neq j\)</span>.</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="eigendecomposition-spectral-decomposition" class="level2">
+<h2 class="anchored" data-anchor-id="eigendecomposition-spectral-decomposition">Eigendecomposition (spectral decomposition)</h2>
+<p>Suppose <span class="math inline">\(A \in S_n\)</span>, i.e., <span class="math inline">\(A\)</span> is a real symmetric <span class="math inline">\(n \times n\)</span> matrix. Then <span class="math inline">\(A\)</span> can be factorized as</p>
+<p><span class="math display">\[
+A = Q\Lambda Q^T,
+\]</span></p>
+<p>. . .</p>
+<p>where <span class="math inline">\(Q \in \mathbb{R}^{n \times n}\)</span> is orthogonal, i.e., satisfies <span class="math inline">\(Q^T Q = I\)</span>, and <span class="math inline">\(\Lambda = \text{diag}(\lambda_1, \ldots , \lambda_n)\)</span>. The (real) numbers <span class="math inline">\(\lambda_i\)</span> are the eigenvalues of <span class="math inline">\(A\)</span> and are the roots of the characteristic polynomial <span class="math inline">\(\text{det}(A - \lambda I)\)</span>. The columns of <span class="math inline">\(Q\)</span> form an orthonormal set of eigenvectors of <span class="math inline">\(A\)</span>. The factorization is called the spectral decomposition or (symmetric) eigenvalue decomposition of <span class="math inline">\(A\)</span>. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>. . .</p>
+<p>We usually order the eigenvalues as <span class="math inline">\(\lambda_1 \geq \lambda_2 \geq \ldots \geq \lambda_n\)</span>. We use the notation <span class="math inline">\(\lambda_i(A)\)</span> to refer to the <span class="math inline">\(i\)</span>-th largest eigenvalue of <span class="math inline">\(A \in S\)</span>. We usually write the largest or maximum eigenvalue as <span class="math inline">\(\lambda_1(A) = \lambda_{\text{max}}(A)\)</span>, and the least or minimum eigenvalue as <span class="math inline">\(\lambda_n(A) = \lambda_{\text{min}}(A)\)</span>.</p>
+</section>
+<section id="eigenvalues" class="level2">
+<h2 class="anchored" data-anchor-id="eigenvalues">Eigenvalues</h2>
+<p>The largest and smallest eigenvalues satisfy</p>
+<p><span class="math display">\[
+\lambda_{\text{min}} (A) = \inf_{x \neq 0} \dfrac{x^T Ax}{x^T x}, \qquad \lambda_{\text{max}} (A) = \sup_{x \neq 0} \dfrac{x^T Ax}{x^T x}
+\]</span></p>
+<p>. . .</p>
+<p>and consequently <span class="math inline">\(\forall x \in \mathbb{R}^n\)</span> (Rayleigh quotient):</p>
+<p><span class="math display">\[
+\lambda_{\text{min}} (A) x^T x \leq x^T Ax \leq \lambda_{\text{max}} (A) x^T x
+\]</span></p>
+<p>. . .</p>
+<p>The <strong>condition number</strong> of a nonsingular matrix is defined as</p>
+<p><span class="math display">\[
+\kappa(A) = \|A\|\|A^{-1}\|
+\]</span></p>
+<p>. . .</p>
+<p>If we use spectral matrix norm, we can get:</p>
+<p><span class="math display">\[
+\kappa(A) = \dfrac{\sigma_{\text{max}}(A)}{\sigma _{\text{min}}(A)}
+\]</span></p>
+<p>If, moreover, <span class="math inline">\(A \in \mathbb{S}^n_{++}\)</span>: <span class="math inline">\(\kappa(A) = \dfrac{\lambda_{\text{max}}(A)}{\lambda_{\text{min}}(A)}\)</span></p>
+</section>
+<section id="condition-number" class="level2">
+<h2 class="anchored" data-anchor-id="condition-number">Condition number</h2>
+<p><embed src="conditions.pdf" class="img-fluid"></p>
+</section>
+<section id="singular-value-decomposition" class="level2">
+<h2 class="anchored" data-anchor-id="singular-value-decomposition">Singular value decomposition</h2>
+<p>Suppose <span class="math inline">\(A \in \mathbb{R}^{m \times n}\)</span> with rank <span class="math inline">\(A = r\)</span>. Then <span class="math inline">\(A\)</span> can be factored as</p>
+<p><span class="math display">\[
+A = U \Sigma V^T
+\]</span></p>
+<p>. . .</p>
+<p>where <span class="math inline">\(U \in \mathbb{R}^{m \times r}\)</span> satisfies <span class="math inline">\(U^T U = I\)</span>, <span class="math inline">\(V \in \mathbb{R}^{n \times r}\)</span> satisfies <span class="math inline">\(V^T V = I\)</span>, and <span class="math inline">\(\Sigma\)</span> is a diagonal matrix with <span class="math inline">\(\Sigma = \text{diag}(\sigma_1, ..., \sigma_r)\)</span>, such that</p>
+<p>. . .</p>
+<p><span class="math display">\[
+\sigma_1 \geq \sigma_2 \geq \ldots \geq \sigma_r &gt; 0.
+\]</span></p>
+<p>. . .</p>
+<p>This factorization is called the <strong>singular value decomposition (SVD)</strong> of <span class="math inline">\(A\)</span>. The columns of <span class="math inline">\(U\)</span> are called left singular vectors of <span class="math inline">\(A\)</span>, the columns of <span class="math inline">\(V\)</span> are right singular vectors, and the numbers <span class="math inline">\(\sigma_i\)</span> are the singular values. The singular value decomposition can be written as</p>
+<p><span class="math display">\[
+A = \sum_{i=1}^{r} \sigma_i u_i v_i^T,
+\]</span></p>
+<p>where <span class="math inline">\(u_i \in \mathbb{R}^m\)</span> are the left singular vectors, and <span class="math inline">\(v_i \in \mathbb{R}^n\)</span> are the right singular vectors.</p>
+</section>
+<section id="singular-value-decomposition-1" class="level2">
+<h2 class="anchored" data-anchor-id="singular-value-decomposition-1">Singular value decomposition</h2>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-question">
+<p>Suppose, matrix <span class="math inline">\(A \in \mathbb{S}^n_{++}\)</span>. What can we say about the connection between its eigenvalues and singular values?</p>
+</div>
+</div>
+</div>
+</div>
+<p>. . .</p>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-question">
+<p>How do the singular values of a matrix relate to its eigenvalues, especially for a symmetric matrix?</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="skeleton-decomposition" class="level2">
+<h2 class="anchored" data-anchor-id="skeleton-decomposition">Skeleton decomposition</h2>
+<div class="columns">
+<div class="column" style="width:70%;">
+<p>Simple, yet very interesting decomposition is Skeleton decomposition, which can be written in two forms:</p>
+<p><span class="math display">\[
+A = U V^T \quad A = \hat{C}\hat{A}^{-1}\hat{R}
+\]</span></p>
+<p>. . .</p>
+<p>The latter expression refers to the fun fact: you can randomly choose <span class="math inline">\(r\)</span> linearly independent columns of a matrix and any <span class="math inline">\(r\)</span> linearly independent rows of a matrix and store only them with the ability to reconstruct the whole matrix exactly.</p>
+<p>. . .</p>
+<p>Use cases for Skeleton decomposition are:</p>
+<ul>
+<li>Model reduction, data compression, and speedup of computations in numerical analysis: given rank-<span class="math inline">\(r\)</span> matrix with <span class="math inline">\(r \ll n, m\)</span> one needs to store <span class="math inline">\(\mathcal{O}((n + m)r) \ll nm\)</span> elements.</li>
+<li>Feature extraction in machine learning, where it is also known as matrix factorization</li>
+<li>All applications where SVD applies, since Skeleton decomposition can be transformed into truncated SVD form.</li>
+</ul>
+</div><div class="column" style="width:30%;">
+<div id="fig-skeleton" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-skeleton-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="skeleton.pdf" class="img-fluid">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-skeleton-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Illustration of Skeleton decomposition
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="canonical-tensor-decomposition" class="level2">
+<h2 class="anchored" data-anchor-id="canonical-tensor-decomposition">Canonical tensor decomposition</h2>
+<p>One can consider the generalization of Skeleton decomposition to the higher order data structure, like tensors, which implies representing the tensor as a sum of <span class="math inline">\(r\)</span> primitive tensors.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="cp.pdf" class="img-fluid" style="width:40.0%"></p>
+<figcaption>Illustration of Canonical Polyadic decomposition</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-example callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-example">
+<p>Note, that there are many tensor decompositions: Canonical, Tucker, Tensor Train (TT), Tensor Ring (TR), and others. In the tensor case, we do not have a straightforward definition of <em>rank</em> for all types of decompositions. For example, for TT decomposition rank is not a scalar, but a vector.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="determinant-and-trace" class="level2">
+<h2 class="anchored" data-anchor-id="determinant-and-trace">Determinant and trace</h2>
+<p>The determinant and trace can be expressed in terms of the eigenvalues <span class="math display">\[
+\text{det} A = \prod\limits_{i=1}^n \lambda_i, \qquad \text{tr} A = \sum\limits_{i=1}^n \lambda_i
+\]</span> The determinant has several appealing (and revealing) properties. For instance,</p>
+<ul>
+<li><span class="math inline">\(\text{det} A = 0\)</span> if and only if <span class="math inline">\(A\)</span> is singular;</li>
+<li><span class="math inline">\(\text{det}  AB = (\text{det} A)(\text{det}  B)\)</span>;</li>
+<li><span class="math inline">\(\text{det}  A^{-1} = \frac{1}{\text{det} \ A}\)</span>.</li>
+</ul>
+<p>. . .</p>
+<p>Don’t forget about the cyclic property of a trace for arbitrary matrices <span class="math inline">\(A, B, C, D\)</span> (assuming, that all dimensions are consistent):</p>
+<p><span class="math display">\[
+\text{tr} (ABCD) = \text{tr} (DABC) = \text{tr} (CDAB) = \text{tr} (BCDA)
+\]</span></p>
+<p>. . .</p>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-question">
+<p>How does the determinant of a matrix relate to its invertibility?</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="convergence-rates" class="level1">
+<h1>Convergence rates</h1>
+<section id="convergence-rate" class="level2">
+<h2 class="anchored" data-anchor-id="convergence-rate">Convergence rate</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="convergence.pdf" class="img-fluid"></p>
+<figcaption>Difference between the convergence speed</figcaption>
+</figure>
+</div>
+</section>
+<section id="linear-convergence" class="level2">
+<h2 class="anchored" data-anchor-id="linear-convergence">Linear convergence</h2>
+<p>To compare the performance of algorithms, we must define the terminology for different types of convergence. Let <span class="math inline">\(r_k\)</span> be a sequence of non-negative real numbers that converges to zero. Typically, we have an iterative method producing a sequence of iterates <span class="math inline">\(x_k\)</span> approaching the optimal solution <span class="math inline">\(x^*\)</span>, and <span class="math inline">\(r_k = \|x_k - x^*\|_2\)</span>.</p>
+<p>The <strong>linear convergence</strong> of <span class="math inline">\(r_k\)</span> is defined as follows:</p>
+<p>A sequence <span class="math inline">\(\{r_k\}_{k=m}^\infty\)</span> converges linearly with a parameter <span class="math inline">\(0 &lt; q &lt; 1\)</span> if there exists a constant <span class="math inline">\(C &gt; 0\)</span> such that: <span class="math display">\[
+r_k \leq C q^k, \quad \text{for all } k \geq m.
+\]</span> If such a <span class="math inline">\(q\)</span> exists, the sequence is said to have linear convergence. The <strong>exact lower bound</strong> of all <span class="math inline">\(q\)</span> satisfying the inequality is called the <strong>rate of linear convergence</strong> of the sequence.</p>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-question">
+<p>Suppose, you have two sequences with linear convergence rates <span class="math inline">\(q_1 = 0.1\)</span> and <span class="math inline">\(q_2 = 0.7\)</span>, which one is faster?</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="linear-convergence-1" class="level2">
+<h2 class="anchored" data-anchor-id="linear-convergence-1">Linear convergence</h2>
+<div class="callout callout-style-default callout-example callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-example">
+<p>Let us have the following sequence:</p>
+<p><span class="math display">\[
+r_k = \dfrac{1}{2^k}
+\]</span></p>
+<p>One can immediately conclude, that we have a linear convergence with parameters <span class="math inline">\(q = \dfrac{1}{2}\)</span> and <span class="math inline">\(C = 0\)</span>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-question">
+<p>Determine the convergence of the following sequence <span class="math display">\[
+r_k = \dfrac{3}{2^k}
+\]</span></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sublinear-convergence" class="level2">
+<h2 class="anchored" data-anchor-id="sublinear-convergence">Sublinear convergence</h2>
+<p>If the sequence <span class="math inline">\(r_k\)</span> converges to zero, but does not have linear convergence, the convergence is said to be sublinear. Sometimes we can consider the following class of sublinear convergence: <span class="math display">\[
+\| x_{k+1} - x^* \|_2 \leq C k^{q},
+\]</span> where <span class="math inline">\(q &lt; 0\)</span> and <span class="math inline">\(0 &lt; C &lt; \infty\)</span>. Informally, sublinear convergence means the sequence converges slower than any geometric progression.</p>
+</section>
+<section id="superlinear-convergence" class="level2">
+<h2 class="anchored" data-anchor-id="superlinear-convergence">Superlinear convergence</h2>
+<p>A sequence <span class="math inline">\(\{r_k\}_{k=m}^\infty\)</span> is said to have <strong>superlinear convergence</strong> if it converges to zero faster than any linearly convergent sequence. Verify, that a sequence <span class="math inline">\(\{r_k\}_{k=m}^\infty\)</span> is superlinear if it converges linearly with the rate <span class="math inline">\(q = 0\)</span>.</p>
+<p>For <span class="math inline">\(p &gt; 1\)</span>, a sequence has <strong>superlinear convergence of order <span class="math inline">\(p\)</span></strong> if there exists <span class="math inline">\(C &gt; 0\)</span> and <span class="math inline">\(0 &lt; q &lt; 1\)</span> such that: <span class="math display">\[
+r_k \leq C q^{p^k}, \quad \text{for all } k \geq m.
+\]</span> When <span class="math inline">\(p = 2\)</span>, this is called <strong>quadratic convergence</strong>.</p>
+<p>. . .</p>
+<div class="callout callout-style-default callout-example callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Illustrative Example
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-example">
+<p>Suppose <span class="math inline">\(x^* = 1.23456789\)</span> (the true solution), and the iterative sequence starts with an error <span class="math inline">\(r_k = 10^{-3}\)</span>, corresponding to 3 correct significant digits (<span class="math inline">\(1.234\)</span>).</p>
+<ol type="1">
+<li><p>After the first iteration: <span class="math display">\[
+r_{k+1} \approx r_k^2 = (10^{-3})^2 = 10^{-6}.
+\]</span> Now the error is <span class="math inline">\(10^{-6}\)</span>, and we have 6 correct digits (<span class="math inline">\(1.23456\)</span>).</p></li>
+<li><p>After the second iteration: <span class="math display">\[
+r_{k+2} \approx r_{k+1}^2 = (10^{-6})^2 = 10^{-12}.
+\]</span> Now the error is <span class="math inline">\(10^{-12}\)</span>, and we have 12 correct digits (<span class="math inline">\(1.234567890123\)</span>).</p></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="convergence-rates-practical-observations" class="level2">
+<h2 class="anchored" data-anchor-id="convergence-rates-practical-observations">Convergence rates practical observations:</h2>
+<ul>
+<li><span class="math inline">\(\|x_{k+1} - x^*\|_2 \leq \frac{1}{k^{\frac1p}} \|x_0 - x^*\|_2\)</span> implies sublinear convergence rate</li>
+<li><span class="math inline">\(\|x_{k+1} - x^*\|_2 \leq q \|x_k - x^*\|_2\)</span> implies linear convergence rate, where <span class="math inline">\(q&lt;1\)</span></li>
+<li><span class="math inline">\(\|x_{k+1} - x^*\|_2 \leq q \|x_k - x^*\|_2^2\)</span> implies quadratic convergence rate, where <span class="math inline">\(q\|x_0 - x^*\|&lt;1\)</span></li>
+</ul>
+</section>
+<section id="root-test" class="level2">
+<h2 class="anchored" data-anchor-id="root-test">Root test</h2>
+<div class="callout callout-style-default callout-theorem callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Theorem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-theorem">
+<p>Let <span class="math inline">\((r_k)_{k=m}^\infty\)</span> be a sequence of non-negative numbers converging to zero, and let <span class="math inline">\(\alpha := \limsup_{k \to \infty} r_k^{1/k}\)</span>. (Note that <span class="math inline">\(\alpha \geq 0\)</span>.)</p>
+<ol type="a">
+<li><p>If <span class="math inline">\(0 \leq \alpha &lt; 1\)</span>, then <span class="math inline">\((r_k)_{k=m}^\infty\)</span> converges linearly with constant <span class="math inline">\(\alpha\)</span>.</p></li>
+<li><p>In particular, if <span class="math inline">\(\alpha = 0\)</span>, then <span class="math inline">\((r_k)_{k=m}^\infty\)</span> converges superlinearly.</p></li>
+<li><p>If <span class="math inline">\(\alpha = 1\)</span>, then <span class="math inline">\((r_k)_{k=m}^\infty\)</span> converges sublinearly.</p></li>
+<li><p>The case <span class="math inline">\(\alpha &gt; 1\)</span> is impossible.</p></li>
+</ol>
+<p><strong>Proof</strong>.</p>
+<ol type="1">
+<li><p>let us show that if <span class="math inline">\((r_k)_{k=m}^\infty\)</span> converges linearly with constant <span class="math inline">\(0 \leq \beta &lt; 1\)</span>, then necessarily <span class="math inline">\(\alpha \leq \beta\)</span>. Indeed, by the definition of the constant of linear convergence, for any <span class="math inline">\(\varepsilon &gt; 0\)</span> satisfying <span class="math inline">\(\beta + \varepsilon &lt; 1\)</span>, there exists <span class="math inline">\(C &gt; 0\)</span> such that <span class="math inline">\(r_k \leq C(\beta + \varepsilon)^k\)</span> for all <span class="math inline">\(k \geq m\)</span>. From this, <span class="math inline">\(r_k^{1/k} \leq C^{1/k}(\beta + \varepsilon)\)</span> for all <span class="math inline">\(k \geq m\)</span>. Passing to the limit as <span class="math inline">\(k \to \infty\)</span> and using <span class="math inline">\(C^{1/k} \to 1\)</span>, we obtain <span class="math inline">\(\alpha \leq \beta + \varepsilon\)</span>. Given the arbitrariness of <span class="math inline">\(\varepsilon\)</span>, it follows that <span class="math inline">\(\alpha \leq \beta\)</span>.</p></li>
+<li><p>Thus, in the case <span class="math inline">\(\alpha = 1\)</span>, the sequence <span class="math inline">\((r_k)_{k=m}^\infty\)</span> cannot have linear convergence according to the above result (proven by contradiction). Since, nevertheless, <span class="math inline">\((r_k)_{k=m}^\infty\)</span> converges to zero, it must converge sublinearly.</p></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="root-test-1" class="level2">
+<h2 class="anchored" data-anchor-id="root-test-1">Root test</h2>
+<div class="callout callout-style-default callout-theorem callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Theorem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-theorem">
+<ol type="1">
+<li><p>Now consider the case <span class="math inline">\(0 \leq \alpha &lt; 1\)</span>. Let <span class="math inline">\(\varepsilon &gt; 0\)</span> be an arbitrary number such that <span class="math inline">\(\alpha + \varepsilon &lt; 1\)</span>. According to the properties of the limsup, there exists <span class="math inline">\(N \geq m\)</span> such that <span class="math inline">\(r_k^{1/k} \leq \alpha + \varepsilon\)</span> for all <span class="math inline">\(k \geq N\)</span>. Hence, <span class="math inline">\(r_k \leq (\alpha + \varepsilon)^k\)</span> for all <span class="math inline">\(k \geq N\)</span>. Therefore, <span class="math inline">\((r_k)_{k=m}^\infty\)</span> converges linearly with parameter <span class="math inline">\(\alpha + \varepsilon\)</span> (it does not matter that the inequality is only valid from the number <span class="math inline">\(N\)</span>). Due to the arbitrariness of <span class="math inline">\(\varepsilon\)</span>, this means that the constant of linear convergence of <span class="math inline">\((r_k)_{k=m}^\infty\)</span> does not exceed <span class="math inline">\(\alpha\)</span>. Since, as shown above, the constant of linear convergence cannot be less than <span class="math inline">\(\alpha\)</span>, this means that the constant of linear convergence of <span class="math inline">\((r_k)_{k=m}^\infty\)</span> is exactly <span class="math inline">\(\alpha\)</span>.</p></li>
+<li><p>Finally, let’s show that the case <span class="math inline">\(\alpha &gt; 1\)</span> is impossible. Indeed, suppose <span class="math inline">\(\alpha &gt; 1\)</span>. Then from the definition of limsup, it follows that for any <span class="math inline">\(N \geq m\)</span>, there exists <span class="math inline">\(k \geq N\)</span> such that <span class="math inline">\(r_k^{1/k} \geq 1\)</span>, and, in particular, <span class="math inline">\(r_k \geq 1\)</span>. But this means that <span class="math inline">\(r_k\)</span> has a subsequence that is bounded away from zero. Hence, <span class="math inline">\((r_k)_{k=m}^\infty\)</span> cannot converge to zero, which contradicts the condition.</p></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="ratio-test" class="level2">
+<h2 class="anchored" data-anchor-id="ratio-test">Ratio test</h2>
+<p>Let <span class="math inline">\(\{r_k\}_{k=m}^\infty\)</span> be a sequence of strictly positive numbers converging to zero. Let</p>
+<p><span class="math display">\[
+q = \lim_{k \to \infty} \dfrac{r_{k+1}}{r_k}
+\]</span></p>
+<ul>
+<li>If there exists <span class="math inline">\(q\)</span> and <span class="math inline">\(0 \leq q &lt;  1\)</span>, then <span class="math inline">\(\{r_k\}_{k=m}^\infty\)</span> has linear convergence with constant <span class="math inline">\(q\)</span>.</li>
+<li>In particular, if <span class="math inline">\(q = 0\)</span>, then <span class="math inline">\(\{r_k\}_{k=m}^\infty\)</span> has superlinear convergence.</li>
+<li>If <span class="math inline">\(q\)</span> does not exist, but <span class="math inline">\(q = \lim\limits_{k \to \infty} \sup_k \dfrac{r_{k+1}}{r_k} &lt;  1\)</span>, then <span class="math inline">\(\{r_k\}_{k=m}^\infty\)</span> has linear convergence with a constant not exceeding <span class="math inline">\(q\)</span>.</li>
+<li>If <span class="math inline">\(\lim\limits_{k \to \infty} \inf_k \dfrac{r_{k+1}}{r_k} =1\)</span>, then <span class="math inline">\(\{r_k\}_{k=m}^\infty\)</span> has sublinear convergence.</li>
+<li>The case <span class="math inline">\(\lim\limits_{k \to \infty} \inf_k \dfrac{r_{k+1}}{r_k} &gt; 1\)</span> is impossible.</li>
+<li>In all other cases (i.e., when <span class="math inline">\(\lim\limits_{k \to \infty} \inf_k \dfrac{r_{k+1}}{r_k} &lt;  1 \leq  \lim\limits_{k \to \infty} \sup_k \dfrac{r_{k+1}}{r_k}\)</span>) we cannot claim anything concrete about the convergence rate <span class="math inline">\(\{r_k\}_{k=m}^\infty\)</span>.</li>
+</ul>
+</section>
+<section id="ratio-test-lemma" class="level2">
+<h2 class="anchored" data-anchor-id="ratio-test-lemma">Ratio test lemma</h2>
+<div class="callout callout-style-default callout-theorem callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Theorem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div>
+<div class="callout-theorem">
+<p>Let <span class="math inline">\((r_k)_{k=m}^\infty\)</span> be a sequence of strictly positive numbers. (The strict positivity is necessary to ensure that the ratios <span class="math inline">\(\frac{r_{k+1}}{r_k}\)</span>, which appear below, are well-defined.) Then</p>
+<p><span class="math display">\[
+\liminf_{k \to \infty} \frac{r_{k+1}}{r_k} \leq \liminf_{k \to \infty} r_k^{1/k} \leq \limsup_{k \to \infty} r_k^{1/k} \leq \limsup_{k \to \infty} \frac{r_{k+1}}{r_k}.
+\]</span></p>
+<p><strong>Proof</strong>.</p>
+<ol type="1">
+<li><p>The middle inequality follows from the fact that the liminf of any sequence is always less than or equal to its limsup. Let’s prove the last inequality; the first one is proved analogously.</p></li>
+<li><p>Denote <span class="math inline">\(L := \limsup_{k \to \infty} \frac{r_{k+1}}{r_k}\)</span>. If <span class="math inline">\(L = +\infty\)</span>, then the inequality is obviously true, so let’s assume <span class="math inline">\(L\)</span> is finite. Note that <span class="math inline">\(L \geq 0\)</span>, since the ratio <span class="math inline">\(\frac{r_{k+1}}{r_k}\)</span> is positive for all <span class="math inline">\(k \geq m\)</span>. Let <span class="math inline">\(\varepsilon &gt; 0\)</span> be an arbitrary number. According to the properties of limsup, there exists <span class="math inline">\(N \geq m\)</span> such that <span class="math inline">\(\frac{r_{k+1}}{r_k} \leq L + \varepsilon\)</span> for all <span class="math inline">\(k \geq N\)</span>. From here, <span class="math inline">\(r_{k+1} \leq (L + \varepsilon)r_k\)</span> for all <span class="math inline">\(k \geq N\)</span>. Applying induction, we get <span class="math inline">\(r_k \leq (L + \varepsilon)^{k-N}r_N\)</span> for all <span class="math inline">\(k \geq N\)</span>. Let <span class="math inline">\(C := (L + \varepsilon)^{-N}r_N\)</span>. Then <span class="math inline">\(r_k \leq C(L + \varepsilon)^k\)</span> for all <span class="math inline">\(k \geq N\)</span>, from which <span class="math inline">\(r_k^{1/k} \leq C^{1/k}(L + \varepsilon)\)</span>. Taking the limsup as <span class="math inline">\(k \to \infty\)</span> and using <span class="math inline">\(C^{1/k} \to 1\)</span>, we get <span class="math inline">\(\limsup_{k \to \infty} r_k^{1/k} \leq L + \varepsilon\)</span>. Given the arbitrariness of <span class="math inline">\(\varepsilon\)</span>, it follows that <span class="math inline">\(\limsup_{k \to \infty} r_k^{1/k} \leq L\)</span>.</p></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="summary" class="level1">
+<h1>Summary</h1>
+<section id="summary-1" class="level2">
+<h2 class="anchored" data-anchor-id="summary-1">Summary</h2>
+<div class="columns nonincremental">
+<div class="column" style="width:50%;">
+<section id="определения" class="level3">
+<h3 class="anchored" data-anchor-id="определения">Определения</h3>
+<ol type="1">
+<li>Положительно определённая матрица.</li>
+<li>Евклидова норма вектора.</li>
+<li>Неравенство треугольника для нормы.</li>
+<li><span class="math inline">\(p\)</span>-норма вектора.</li>
+<li>Как выглядит единичный шар в <span class="math inline">\(p\)</span> - норме на плоскости для <span class="math inline">\(p=1,2,\infty\)</span>?</li>
+<li>Норма Фробениуса для матрицы.</li>
+<li>Спектральная норма матрицы.</li>
+<li>Скалярное произведение двух векторов.</li>
+<li>Скалярное произведение двух матриц, согласованное с нормой Фробениуса.</li>
+<li>Собственные значения матрицы. Спектр матрицы.</li>
+<li>Связь спектра матрицы и её определенности.</li>
+<li>Спектральное разложение матрицы.</li>
+<li>Сингулярное разложение матрицы.</li>
+<li>Связь определителя и собственных чисел для квадратной матрицы.</li>
+<li>Связь следа и собственных чисел для квадратной матрицы.</li>
+</ol>
+</section>
+</div><div class="column" style="width:50%;">
+<ol start="16" type="1">
+<li>Линейная сходимость последовательности.</li>
+<li>Сублинейная сходимость последовательности.</li>
+<li>Сверхлинейная сходимость последовательности.</li>
+<li>Квадратичная сходимость последовательности.</li>
+<li>Тест корней для определения скорости сходимости последовательности.</li>
+<li>Тест отношений для определения скорости сходимости последовательности.</li>
+</ol>
+<section id="теоремы" class="level3">
+<h3 class="anchored" data-anchor-id="теоремы">Теоремы</h3>
+<ol type="1">
+<li>Критерий положительной определенности матрицы через знаки собственных значений матрицы.</li>
+<li>Тест корней</li>
+<li>Тест отношений</li>
+</ol>
+</section>
+</div>
+</div>
+
+
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>A full introduction to applied linear algebra can be found in <a href="https://web.stanford.edu/~boyd/vmls/">Introduction to Applied Linear Algebra – Vectors, Matrices, and Least Squares</a> - book by Stephen Boyd &amp; Lieven Vandenberghe, which is indicated in the source. Also, a useful refresher for linear algebra is in Appendix A of the book Numerical Optimization by Jorge Nocedal Stephen J. Wright.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>A good cheat sheet with matrix decomposition is available at the NLA course <a href="https://nla.skoltech.ru/_files/decompositions.pdf">website</a>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/MerkulovDaniil/hse25/edit/main/lectures/1.md" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer></body></html>
